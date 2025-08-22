@@ -1,0 +1,139 @@
+# Full-Stack Development Workflow
+# Complete workflow for full-stack application development
+
+workflow:
+  name: "Full-Stack Development Workflow"
+  version: "1.0.0"
+  description: "End-to-end workflow for full-stack application development"
+  
+# Workflow stages and agent execution order
+stages:
+  - name: "discovery"
+    description: "Project analysis and planning"
+    agents:
+      - name: "project-discovery"
+        required: true
+        timeout: "5m"
+        
+  - name: "architecture"
+    description: "System architecture and design"
+    agents:
+      - name: "architecture-design"
+        required: true
+        depends_on: ["project-discovery"]
+        timeout: "10m"
+        
+      - name: "ui-ux-design"
+        required: false
+        depends_on: ["project-discovery"]
+        timeout: "8m"
+        
+  - name: "implementation"
+    description: "Core system implementation"
+    agents:
+      - name: "data-architecture"
+        required: true
+        depends_on: ["architecture-design"]
+        timeout: "10m"
+        
+      - name: "security-implementation"
+        required: true
+        depends_on: ["architecture-design"]
+        timeout: "8m"
+        
+      - name: "api-integration"
+        required: true
+        depends_on: ["data-architecture", "security-implementation"]
+        timeout: "12m"
+        
+  - name: "specialization"
+    description: "Specialized feature implementation"
+    agents:
+      - name: "stripe-payment"
+        required: false
+        depends_on: ["api-integration"]
+        timeout: "8m"
+        condition: "project.features.includes('payments')"
+        
+      - name: "code-quality"
+        required: true
+        depends_on: ["api-integration"]
+        timeout: "6m"
+        
+  - name: "deployment"
+    description: "Deployment and operations"
+    agents:
+      - name: "cicd-pipeline"
+        required: true
+        depends_on: ["code-quality"]
+        timeout: "10m"
+        
+      - name: "documentation"
+        required: true
+        depends_on: ["cicd-pipeline"]
+        timeout: "8m"
+
+# Workflow configuration
+config:
+  # Execution settings
+  execution:
+    parallel_execution: true
+    max_concurrent_agents: 3
+    fail_fast: false
+    
+  # Output management
+  outputs:
+    consolidate_artifacts: true
+    generate_summary: true
+    create_project_overview: true
+    
+  # Quality gates
+  quality_gates:
+    enabled: true
+    min_success_rate: 0.8
+    required_outputs: ["system_context", "architecture_design", "deployment_config"]
+    
+  # Notification settings
+  notifications:
+    on_completion: true
+    on_failure: true
+    on_quality_gate_failure: true
+
+# Environment-specific settings
+environments:
+  development:
+    agents:
+      code-quality:
+        settings:
+          strict_mode: false
+          
+  staging:
+    agents:
+      cicd-pipeline:
+        settings:
+          deploy_to_staging: true
+          run_integration_tests: true
+          
+  production:
+    agents:
+      security-implementation:
+        settings:
+          strict_mode: true
+          enable_audit_logging: true
+      cicd-pipeline:
+        settings:
+          require_approval: true
+          backup_before_deploy: true
+
+# Rollback configuration
+rollback:
+  enabled: true
+  strategy: "stage_by_stage"
+  max_rollback_stages: 2
+  
+# Monitoring and alerting
+monitoring:
+  track_execution_time: true
+  monitor_resource_usage: true
+  alert_on_long_execution: true
+  max_execution_time: "60m"

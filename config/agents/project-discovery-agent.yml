@@ -1,0 +1,79 @@
+# Project Discovery Agent Configuration
+name: "Project Discovery Agent"
+version: "1.0.0"
+description: "Analyzes project requirements, dependencies, and integration points"
+
+# Required MCP servers
+mcps:
+  - github
+  - web_search 
+  - conversation_search
+  - memory-server
+
+# Agent dependencies (other agents that should run before this one)
+dependencies: []
+
+# Output specifications
+outputs:
+  - type: "system_context"
+    format: "json"
+    description: "System context diagram and external entity mapping"
+  - type: "integration_map"
+    format: "markdown"
+    description: "Integration points and dependency analysis"
+  - type: "tech_stack_recommendations"
+    format: "yaml"
+    description: "Recommended technology stack"
+
+# Trigger conditions for automatic execution
+triggers:
+  - event: "new_repository"
+    condition: "repository.files_count > 0"
+  - event: "requirements_change"
+    condition: "requirements.updated_at > last_run"
+
+# Agent-specific settings
+settings:
+  analysis_depth: "comprehensive"  # basic, standard, comprehensive
+  include_dependencies: true
+  scan_readme: true
+  analyze_package_files: true
+  check_docker_files: true
+  scan_ci_config: true
+  
+  # GitHub analysis settings
+  github:
+    analyze_commits: true
+    check_issues: true
+    scan_pull_requests: false
+    include_wiki: false
+    
+  # Web search settings
+  web_search:
+    research_technologies: true
+    find_best_practices: true
+    check_security_advisories: true
+    
+  # Output settings
+  output:
+    generate_diagrams: true
+    include_examples: true
+    create_recommendations: true
+
+# Quality thresholds
+quality_thresholds:
+  min_confidence_score: 0.8
+  max_execution_time: "5m"
+  required_outputs: ["system_context", "integration_map"]
+
+# Error handling
+error_handling:
+  retry_attempts: 3
+  retry_delay: "30s"
+  fallback_strategy: "partial_analysis"
+  
+# Logging configuration
+logging:
+  level: "info"
+  include_debug: false
+  log_mcp_calls: true

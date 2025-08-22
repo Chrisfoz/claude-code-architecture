@@ -1,0 +1,124 @@
+# MCP Server Configuration
+# Configure all MCP servers used by the Claude Code Architecture Framework
+
+mcp_servers:
+  # Core MCP Servers (Required)
+  github:
+    endpoint: "github"
+    required: true
+    description: "GitHub repository management and code operations"
+    config:
+      token: "${GITHUB_TOKEN}"
+      owner: "${GITHUB_OWNER}"
+      default_branch: "main"
+    
+  server-filesystem:
+    endpoint: "server-filesystem"
+    required: true
+    description: "Local file system operations"
+    config:
+      allowed_directories: 
+        - "/project"
+        - "/tmp"
+        - "/workspace"
+      max_file_size: "10MB"
+      
+  artifacts:
+    endpoint: "artifacts"
+    required: true
+    description: "Document and diagram generation"
+    config:
+      output_formats: ["markdown", "json", "yaml", "html"]
+      max_size: "5MB"
+      
+  memory-server:
+    endpoint: "memory-server"
+    required: true
+    description: "Context and knowledge management"
+    config:
+      storage_type: "local"
+      max_entities: 10000
+      
+  web_search:
+    endpoint: "brave-search"
+    required: true
+    description: "Web search for research and discovery"
+    config:
+      api_key: "${BRAVE_SEARCH_API_KEY}"
+      max_results: 20
+      
+  repl:
+    endpoint: "repl"
+    required: true
+    description: "Code analysis and validation"
+    config:
+      timeout: "30s"
+      max_memory: "512MB"
+
+  # Specialized MCP Servers (Optional)
+  puppeteer:
+    endpoint: "puppeteer"
+    required: false
+    description: "UI testing and automation"
+    config:
+      headless: true
+      timeout: "30s"
+      viewport:
+        width: 1280
+        height: 720
+        
+  vercel:
+    endpoint: "vercel"
+    required: false
+    description: "Deployment management"
+    config:
+      token: "${VERCEL_TOKEN}"
+      team_id: "${VERCEL_TEAM_ID}"
+      
+  mcp-server-supabase:
+    endpoint: "mcp-server-supabase"
+    required: false
+    description: "Database operations"
+    config:
+      project_id: "${SUPABASE_PROJECT_ID}"
+      api_key: "${SUPABASE_API_KEY}"
+      
+  conversation_search:
+    endpoint: "conversation_search"
+    required: false
+    description: "Historical context search"
+    config:
+      max_results: 10
+      include_context: true
+      
+  hugging_face:
+    endpoint: "Hugging Face"
+    required: false
+    description: "AI-powered generation"
+    config:
+      api_key: "${HUGGING_FACE_API_KEY}"
+      model_timeout: "60s"
+
+# Global MCP Settings
+global_settings:
+  connection_timeout: "30s"
+  max_concurrent_connections: 10
+  retry_attempts: 3
+  retry_delay: "5s"
+  
+# Health Check Configuration
+health_checks:
+  enabled: true
+  interval: "5m"
+  timeout: "10s"
+  
+# Monitoring and Logging
+monitoring:
+  log_all_calls: true
+  track_performance: true
+  alert_on_failures: true
+  
+logging:
+  level: "info"
+  format: "json"
+  include_request_id: true
